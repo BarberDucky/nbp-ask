@@ -13,5 +13,6 @@ namespace nbp_ask_data.Model
         public String Password { get; set; }
         public List<String> Questions { get; set; }
         public List<String> Answers { get; set; }
+        public List<UserConversation> UserConversaions { get; set; }
     }
 }

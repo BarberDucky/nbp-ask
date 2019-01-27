@@ -13,6 +13,7 @@ namespace nbp_ask_data.Model
         public String Title { get; set; }
         public String Content { get; set; }
         public int Points { get; set; }
+        public bool IsAnswered { get; set; }
         public List<String> Tags { get; set; }
         public User Poster { get; set; }
         public List<Answer> Answers { get; set; }
