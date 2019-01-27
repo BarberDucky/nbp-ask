@@ -9,24 +9,25 @@ namespace nbp_ask_data
 {
     public class DataLayer
     {
-        private static MongoClient client = null;
+        private static IMongoDatabase database = null;
 
-        public static MongoClient Client
+        public static IMongoDatabase Database
         {
             get
             {
-                if (client == null)
+                if (database == null)
                     return Connect();
-                return client;
+                return database;
             }
         }
 
-        public static MongoClient Connect()
+        public static IMongoDatabase Connect()
         {
             try
             {
-                client = new MongoClient(new MongoUrl("mongodb://localhost/?safe=true"));
-                return client;
+                MongoClient client = new MongoClient(new MongoUrl("mongodb://localhost/?safe=true"));
+                database = client.GetDatabase("ask-db");
+                return database;
             }
             catch (Exception e)
             {
