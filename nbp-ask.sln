@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nbp-ask-data", "nbp-ask-data\nbp-ask-data.csproj", "{A1B6D4D3-7B6D-4CDE-901C-01CB20787111}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nbp-ask-api", "nbp-ask-api\nbp-ask-api.csproj", "{F557C9F2-9833-4309-A28C-E9B1DEB3B881}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A1B6D4D3-7B6D-4CDE-901C-01CB20787111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B6D4D3-7B6D-4CDE-901C-01CB20787111}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B6D4D3-7B6D-4CDE-901C-01CB20787111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F557C9F2-9833-4309-A28C-E9B1DEB3B881}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F557C9F2-9833-4309-A28C-E9B1DEB3B881}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F557C9F2-9833-4309-A28C-E9B1DEB3B881}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F557C9F2-9833-4309-A28C-E9B1DEB3B881}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

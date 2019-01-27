@@ -20,6 +20,8 @@ namespace nbp_ask_data.DataProvider
                 User newUser = UserDTO.FromDTO(userDto);
                 String newId = Guid.NewGuid().ToString();
                 newUser.Id = newId;
+                newUser.Questions = new List<string>();
+                newUser.Answers = new List<string>();
                 collection.InsertOne(newUser);
                 return newId;
             }
@@ -49,7 +51,6 @@ namespace nbp_ask_data.DataProvider
         public static UserDTO UpdateUser(UserDTO userDTO, String userId)
         {
             var filter = Builders<User>.Filter.Eq("Id", userId);
-            var update = Builders<User>.Update.Inc("i", 100);
 
             var collection = DataLayer.Database.GetCollection<User>("users");
 

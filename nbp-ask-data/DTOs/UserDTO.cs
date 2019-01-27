@@ -22,8 +22,8 @@ namespace nbp_ask_data.DTOs
                 Id = dto.Id,
                 Username = dto.Username,
                 Password = dto.Password,
-                Questions = new List<String>(),
-                Answers = new List<String>()
+                Questions = dto.Questions,
+                Answers = dto.Answers
             };
         }
 
