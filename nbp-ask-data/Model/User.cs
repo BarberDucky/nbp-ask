@@ -11,7 +11,8 @@ namespace nbp_ask_data.Model
         public String Id { get; set; }
         public String Username { get; set; }
         public String Password { get; set; }
-        public List<Question> Questions { get; set; }
-        public List<Answer> Answers { get; set; }
+        public List<String> Questions { get; set; }
+        public List<String> Answers { get; set; }
+        public List<UserConversation> UserConversaions { get; set; }
     }
 }

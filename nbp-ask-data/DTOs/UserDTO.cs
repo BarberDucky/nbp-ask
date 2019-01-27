@@ -12,8 +12,8 @@ namespace nbp_ask_data.DTOs
         public String Id { get; set; }
         public String Username { get; set; }
         public String Password { get; set; }
-        //public List<Question> Questions { get; set; }
-        //public List<Answer> Answers { get; set; }
+        public List<String> Questions { get; set; }
+        public List<String> Answers { get; set; }
 
         public static User FromDTO(UserDTO dto)
         {
@@ -22,8 +22,20 @@ namespace nbp_ask_data.DTOs
                 Id = dto.Id,
                 Username = dto.Username,
                 Password = dto.Password,
-                Questions = new List<Question>(),
-                Answers = new List<Answer>()
+                Questions = dto.Questions,
+                Answers = dto.Answers
+            };
+        }
+
+        public static UserDTO FromEntity(User user)
+        {
+            return new UserDTO()
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Password = user.Password,
+                Questions = user.Questions,
+                Answers = user.Answers
             };
         }
     }
