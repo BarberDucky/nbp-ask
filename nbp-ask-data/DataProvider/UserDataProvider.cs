@@ -12,16 +12,44 @@ namespace nbp_ask_data.DataProvider
 {
     public class UserDataProvider
     {
-        public static String CreateUser(UserDTO userDto)
+        private static bool CheckDTO(UserDTO userDTO)
+        {
+            if (userDTO.Password == null ||
+                userDTO.Username == null ||
+                userDTO.Password == "" ||
+                userDTO.Username == "")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static String CreateUser(UserDTO userDTO)
         {
             try
-            { 
+            {
+                if (!CheckDTO(userDTO))
+                {
+                    return null;
+                }
+
                 var collection = DataLayer.Database.GetCollection<User>("users");
-                User newUser = UserDTO.FromDTO(userDto);
+
+                //check if user exists
+                var filter = Builders<User>.Filter.Eq("Username", userDTO.Username);
+                User fetchedUser = collection.Find<User>(filter).FirstOrDefault<User>();
+                if (fetchedUser != null)
+                {
+                    return null;
+                }
+
+                User newUser = UserDTO.FromDTO(userDTO);
                 String newId = Guid.NewGuid().ToString();
                 newUser.Id = newId;
                 newUser.Questions = new List<string>();
-                newUser.Answers = new List<string>();
                 collection.InsertOne(newUser);
                 return newId;
             }
@@ -48,17 +76,82 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
+        public static List<UserDTO> ReadAllUsers()
+        {
+            try
+            {
+                var collection = DataLayer.Database.GetCollection<User>("users");
+                List<User> fetchedUsers = collection.Find<User>(_ => true).ToList<User>();
+                return UserDTO.FromEntityList(fetchedUsers);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public static UserDTO LoginUser(UserDTO userDTO)
+        {
+            try
+            {
+                if (!CheckDTO(userDTO))
+                {
+                    return null;
+                }
+
+                var filter = Builders<User>.Filter.Eq("Username", userDTO.Username);
+                var collection = DataLayer.Database.GetCollection<User>("users");
+                User fetchedUser = collection.FindSync<User>(filter).First<User>();
+                if (fetchedUser.Password == userDTO.Password)
+                {
+                    return UserDTO.FromEntity(fetchedUser);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         public static UserDTO UpdateUser(UserDTO userDTO, String userId)
         {
-            var filter = Builders<User>.Filter.Eq("Id", userId);
 
-            var collection = DataLayer.Database.GetCollection<User>("users");
+            try
+            {
+                if (!CheckDTO(userDTO))
+                {
+                    return null;
+                }
 
-            User updatedUser = UserDTO.FromDTO(userDTO);
-            updatedUser.Id = userId;
-            collection.FindOneAndReplace<User>(filter, updatedUser);
+                var idFilter = Builders<User>.Filter.Eq("Id", userId);
+                var existsFilter = Builders<User>.Filter.Eq("Username", userDTO.Username);
 
-            return UserDTO.FromEntity(updatedUser);
+                var collection = DataLayer.Database.GetCollection<User>("users");
+
+                //check if user exists
+                User fetchedUser = collection.Find<User>(existsFilter).FirstOrDefault<User>();
+                if (fetchedUser != null && fetchedUser.Id != userId)
+                {
+                    return null;
+                }
+
+                User updatedUser = UserDTO.FromDTO(userDTO);
+                updatedUser.Id = userId;
+                collection.FindOneAndReplace<User>(idFilter, updatedUser);
+
+                return UserDTO.FromEntity(updatedUser);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
     }
 }

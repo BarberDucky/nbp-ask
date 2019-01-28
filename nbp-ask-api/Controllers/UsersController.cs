@@ -13,15 +13,22 @@ namespace nbp_ask_api.Controllers
     public class UsersController : ApiController
     {
         // GET: api/Users
-        public IEnumerable<String> Get()
+        public IEnumerable<UserDTO> Get()
         {
-            return new string[] { "value1", "value2" };
+            return UserDataProvider.ReadAllUsers();
         }
 
         // GET: api/Users/5
         public UserDTO Get(String id)
         {
             return UserDataProvider.ReadUser(id);
+        }
+
+        [HttpPost]
+        [Route("api/Users/Login")]
+        public UserDTO Login([FromBody]UserDTO userDTO)
+        {
+            return UserDataProvider.LoginUser(userDTO);
         }
 
         // POST: api/Users
