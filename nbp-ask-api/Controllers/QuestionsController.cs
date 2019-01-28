@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using nbp_ask_data.DataProvider;
 using nbp_ask_data.DTOs;
 
 namespace nbp_ask_api.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class QuestionsController : ApiController
     {
         // GET: api/Questions
