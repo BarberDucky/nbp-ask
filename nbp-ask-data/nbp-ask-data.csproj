@@ -63,6 +63,7 @@
     <Compile Include="DataProvider\AnswerDataProvider.cs" />
     <Compile Include="DataProvider\QuestionDataProvider.cs" />
     <Compile Include="DataProvider\UserDataProvider.cs" />
+    <Compile Include="DTOs\QuestionDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
     <Compile Include="Model\Answer.cs" />
     <Compile Include="Model\Conversation.cs" />
