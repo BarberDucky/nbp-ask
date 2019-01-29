@@ -13,5 +13,12 @@ namespace nbp_ask_data.Model
         public String UserId2 { get; set; }
         public List<Message> Messages { get; set; }
         public DateTime Timestamp { get; set; }
+
+        public Conversation()
+        {
+            Messages = new List<Message>();
+            Timestamp = DateTime.Now;
+        }
     }
+
 }
