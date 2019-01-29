@@ -53,6 +53,7 @@ namespace nbp_ask_data.DataProvider
                 Question newQuestion = QuestionDTO.FromDTO(questionDTO);
                 String newId = Guid.NewGuid().ToString();
                 newQuestion.Id = newId;
+                newQuestion.TimeStamp = DateTime.Now;
                 newQuestion.Answers = new List<Answer>();
                 collection.InsertOne(newQuestion);
 
@@ -122,6 +123,14 @@ namespace nbp_ask_data.DataProvider
                 updatedQuestion.Id = questionId;
                 updatedQuestion.PosterId = fetchedQuestion.PosterId;
                 updatedQuestion.TimeStamp = fetchedQuestion.TimeStamp;
+
+                fetchedQuestion.IsAnswered = false;
+                foreach (Answer answer in fetchedQuestion.Answers)
+                {
+                    if (answer.IsTrue) fetchedQuestion.IsAnswered = true;
+
+                }
+
                 collection.FindOneAndReplace<QuestionDTO>(idFilter, updatedQuestion);
 
                 return QuestionDTO.FromEntity(updatedQuestion);
