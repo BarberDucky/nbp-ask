@@ -33,21 +33,21 @@ namespace nbp_ask_api.Controllers
         }
 
         // POST: api/Answers
-        public String Post([FromBody]AnswerDTO dto)
+        public QuestionDTO Post([FromBody]AnswerDTO dto)
         {
             return AnswerDataProvider.CreateAnswer(dto);
         }
 
         [HttpPut]
         [Route("api/Questions/{questionId}/Answers/{answerId}")]
-        public AnswerDTO Put(String questionId, String answerId, [FromBody]AnswerDTO answerDTO)
+        public QuestionDTO Put(String questionId, String answerId, [FromBody]AnswerDTO answerDTO)
         {
             return AnswerDataProvider.UpdateAnswer(questionId, answerId, answerDTO);
         }
 
         [HttpDelete]
         [Route("api/Questions/{questionId}/Answers/{answerId}")]
-        public bool Delete(String questionId, String answerId)
+        public QuestionDTO Delete(String questionId, String answerId)
         {
             return AnswerDataProvider.DeleteAnswer(questionId, answerId);
         }

@@ -11,7 +11,7 @@ namespace nbp_ask_data.DataProvider
 {
     public class AnswerDataProvider
     {
-        public static String CreateAnswer(AnswerDTO answerDTO)
+        public static QuestionDTO CreateAnswer(AnswerDTO answerDTO)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace nbp_ask_data.DataProvider
 
                 questionCollection.FindOneAndReplace<Question>(questionFilter, fetchedQuestion);
 
-                return newAnswer.Id;
+                return QuestionDTO.FromEntity(fetchedQuestion);
             }
             catch(Exception e)
             {
@@ -80,7 +80,7 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
-        public static AnswerDTO UpdateAnswer(String questionId, String answerId, AnswerDTO answerDTO)
+        public static QuestionDTO UpdateAnswer(String questionId, String answerId, AnswerDTO answerDTO)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace nbp_ask_data.DataProvider
 
                 questionCollection.FindOneAndReplace<Question>(questionFilter, fetchedQuestion);
 
-                return AnswerDTO.FromEntity(updatedAnswer);
+                return QuestionDTO.FromEntity(fetchedQuestion);
             }
             catch (Exception e)
             {
@@ -130,7 +130,7 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
-        public static bool DeleteAnswer(String questionId, String answerId)
+        public static QuestionDTO DeleteAnswer(String questionId, String answerId)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace nbp_ask_data.DataProvider
                 Question fetchedQuestion = questionCollection.Find<Question>(questionFilter).FirstOrDefault<Question>();
                 if (fetchedQuestion == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 Answer answerForDeletion = fetchedQuestion.Answers.Find(answer => answer.Id == answerId);
@@ -152,12 +152,12 @@ namespace nbp_ask_data.DataProvider
                 fetchedQuestion.Answers.Remove(answerForDeletion);
                 questionCollection.FindOneAndReplace<Question>(questionFilter, fetchedQuestion);
 
-                return true;
+                return QuestionDTO.FromEntity(fetchedQuestion);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return false;
+                return null;
             }
         }
     }
