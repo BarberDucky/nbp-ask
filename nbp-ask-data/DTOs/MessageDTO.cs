@@ -55,7 +55,7 @@ namespace nbp_ask_data.DTOs
             {
                 Id = m.Id,
                 Content = m.Content,
-                Timestamp = m.Timestamp,
+                Timestamp = m.Timestamp.ToLocalTime(),
                 SenderId = m.SenderId,
                 SenderUsername = m.SenderUsername
             };

@@ -23,7 +23,7 @@ namespace nbp_ask_api.Controllers
         }
 
         // POST: api/Message
-        public string Post([FromBody]CreateMessageDTO dto)
+        public ConversationWithMessagesDTO Post([FromBody]CreateMessageDTO dto)
         {
             return MessageDataProvider.CreateMessage(dto);
         }
@@ -31,7 +31,7 @@ namespace nbp_ask_api.Controllers
         // POST: api/Message
         [HttpPost]
         [Route("api/Message/AddMessageToConversation")]
-        public string Post([FromBody]MessageWithConversationDTO dto)
+        public ConversationWithMessagesDTO Post([FromBody]MessageWithConversationDTO dto)
         {
             return MessageDataProvider.AddMessageToConversation(dto);
         }

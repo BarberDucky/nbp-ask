@@ -17,7 +17,7 @@ namespace nbp_ask_data.Model
         public Message()
         {
             Id = Guid.NewGuid().ToString();
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.Now.ToUniversalTime();
         }
     }
 }

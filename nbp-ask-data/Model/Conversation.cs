@@ -19,7 +19,18 @@ namespace nbp_ask_data.Model
         public Conversation()
         {
             Messages = new List<Message>();
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.Now.ToUniversalTime();
+        }
+
+        public Conversation(Conversation c)
+        {
+            this.Id = c.Id;
+            this.Timestamp = c.Timestamp;
+            this.UserId1 = c.UserId1;
+            this.UserId2 = c.UserId2;
+            this.User1Username = c.User1Username;
+            this.User2Username = c.User2Username;
+            Messages = new List<Message>();
         }
     }
 

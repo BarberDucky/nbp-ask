@@ -148,6 +148,8 @@ namespace nbp_ask_data.DataProvider
                 Conversation conv = GetConversation(convId);
                 if (conv == null)
                     return null;
+                if (conv.UserId1 != userId && conv.UserId2 != userId)
+                    return null;
                 return ConversationWithMessagesDTO.FromEntity(conv, userId);
             }
             catch (Exception e)
