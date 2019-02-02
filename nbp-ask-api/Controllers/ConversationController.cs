@@ -1,35 +1,32 @@
 ﻿using nbp_ask_data.DataProvider;
+using nbp_ask_data.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace nbp_ask_api.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ConversationController : ApiController
     {
         // GET: api/Conversation
-        public IEnumerable<string> Get()
+        [HttpGet]
+        [Route("api/Conversation/{convId}/User/{userId}")]
+        public ConversationWithMessagesDTO Get(string convId, string userId)
         {
-            return new string[] { "value1", "value2" };
+            return ConversationDataProvider.ReadConversation(convId, userId);
         }
 
         // GET: api/Conversation/5
-        public string Get(int id)
+        [HttpGet]
+        [Route("api/Conversation/UserConversations/{id}")]
+        public List<ReadConversationDTO> Get(string id)
         {
-            return "value";
-        }
-
-        // POST: api/Conversation
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/Conversation/5
-        public void Put(int id, [FromBody]string value)
-        {
+            return ConversationDataProvider.GetConversationsWithUser(id);
         }
 
         // DELETE: api/Conversation/5

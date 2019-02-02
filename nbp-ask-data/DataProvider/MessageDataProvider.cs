@@ -10,6 +10,39 @@ namespace nbp_ask_data.DataProvider
 {
     public class MessageDataProvider
     {
+        #region Private
+        private static string GetSenderUserName(Conversation c, string senderId)
+        {
+            if (c.UserId1 == senderId)
+                return c.User1Username;
+            else
+                return c.User2Username;
+        }
+
+        private static string AddMessageToConversation(Message message, Conversation c)
+        {
+            message.SenderUsername = GetSenderUserName(c, message.SenderId);
+            c.Messages.Add(message);
+            c.Timestamp = message.Timestamp;
+
+            if (ConversationDataProvider.UpdateConversation(c))
+                return message.Id;
+
+            return null;
+        }
+
+        private static Message FindMessage(string convId, string messageId)
+        {
+            Conversation c = ConversationDataProvider.GetConversation(convId);
+            if (c == null)
+                return null;
+
+            Message msg = c.Messages.Find(x => x.Id == messageId);
+            return msg;
+        }
+
+        #endregion
+
         public static string AddMessageToConversation(MessageWithConversationDTO dto)
         {
             try
@@ -19,15 +52,8 @@ namespace nbp_ask_data.DataProvider
                     return null;
 
                 Message message = MessageWithConversationDTO.FromDTO(dto);
-                message.Id = Guid.NewGuid().ToString();
 
-                existConv.Messages.Add(message);
-                existConv.Timestamp = message.Timestamp;
-
-                if (ConversationDataProvider.UpdateConversation(existConv))
-                    return message.Id;
-
-                return null;
+                return AddMessageToConversation(message, existConv);
 
             }
             catch (Exception e)
@@ -37,36 +63,28 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
-        public static string CreateMessage(MessageDTO dto)
+        public static string CreateMessage(CreateMessageDTO dto)
         {
             try
             {
-                Message message = MessageDTO.FromDTO(dto);
-                message.Id = Guid.NewGuid().ToString();
+                // ako koverzacija vec postoji
+                Message message = CreateMessageDTO.FromDTO(dto);
 
-                Conversation existConv = ConversationDataProvider.GetConversation(dto.SenderId, dto.ReceiverId);
+                Conversation existConv = ConversationDataProvider.GetConversation(dto.SenderId, dto.ReceiverUsername);
+
                 if (existConv != null)
                 {
-                    existConv.Messages.Add(message);
-                    existConv.Timestamp = message.Timestamp;
-                    if (ConversationDataProvider.UpdateConversation(existConv))
-                        return message.Id;
-                    return null;
+                    return AddMessageToConversation(message, existConv);
                 }
 
-                //////////////////////////////////////////////////
-                CreateConversationDTO cDTO = new CreateConversationDTO()
-                {
-                    UserId1 = dto.SenderId,
-                    UserId2 = dto.ReceiverId
-                };
+                //Ako konverzacija vec ne postoji
 
-                Conversation conv = ConversationDataProvider.CreateConversationFromDTO(cDTO);
+                Conversation conv = ConversationDataProvider.CreateConversation(dto.SenderId, dto.ReceiverUsername);
 
                 if (conv == null)
                     return null;
 
-
+                message.SenderUsername = GetSenderUserName(conv, message.SenderId);
                 conv.Messages.Add(message);
 
                 if (ConversationDataProvider.InsertConversation(conv) == null)
@@ -79,6 +97,23 @@ namespace nbp_ask_data.DataProvider
                 Console.WriteLine(e.Message);
                 return null;
             }
+        }
+
+        public static ReadMessageDTO ReadMessage(string convId, string messageId)
+        {
+            try
+            {
+                Message msg = FindMessage(convId, messageId);
+                if (msg == null)
+                    return null;
+                return ReadMessageDTO.FromEntity(msg);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+
         }
 
         public static bool DeleteMessage(string MessageId, string ConversationId)

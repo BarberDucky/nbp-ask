@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace nbp_ask_data.DTOs
 {
-    public class MessageDTO
+    public class CreateMessageDTO
     {
         public String Content { get; set; }
         public String SenderId { get; set; }
-        public String ReceiverId { get; set; }
+       // public String ReceiverId { get; set; }
+        public String ReceiverUsername { get; set; }
 
-        public static Message FromDTO(MessageDTO dto)
+        public static Message FromDTO(CreateMessageDTO dto)
         {
             return new Message()
             {
@@ -27,7 +28,7 @@ namespace nbp_ask_data.DTOs
     {
         public String Content { get; set; }
         public String SenderId { get; set; }
-        public String ReceiverId { get; set; }
+        //public String ReceiverId { get; set; }
         public String ConversationId { get; set; }
 
         public static Message FromDTO(MessageWithConversationDTO dto)
@@ -37,6 +38,41 @@ namespace nbp_ask_data.DTOs
                 Content = dto.Content,
                 SenderId = dto.SenderId
             };
+        }
+    }
+
+    public class ReadMessageDTO
+    {
+        public String Id { get; set; }
+        public String Content { get; set; }
+        public DateTime Timestamp { get; set; }
+        public String SenderId { get; set; }
+        public String SenderUsername { get; set; }
+
+        public static ReadMessageDTO FromEntity(Message m)
+        {
+            return new ReadMessageDTO()
+            {
+                Id = m.Id,
+                Content = m.Content,
+                Timestamp = m.Timestamp,
+                SenderId = m.SenderId,
+                SenderUsername = m.SenderUsername
+            };
+        }
+
+        public static List<ReadMessageDTO> FromEntityList(List<Message> messages)
+        {
+            List<ReadMessageDTO> list = new List<ReadMessageDTO>();
+            if (messages != null)
+            {
+                foreach (var c in messages)
+                {
+                    list.Add(ReadMessageDTO.FromEntity(c));
+                }
+            }
+
+            return list;
         }
     }
 }

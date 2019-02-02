@@ -20,8 +20,8 @@ namespace nbp_ask_data.DataProvider
                 var filter1 = Builders<User>.Filter.Eq("Id", conv.UserId1);
                 var filter2 = Builders<User>.Filter.Eq("Id", conv.UserId2);
                 var collection = DataLayer.Database.GetCollection<User>("users");
-                User user1 = collection.FindSync<User>(filter1).First<User>();
-                User user2 = collection.FindSync<User>(filter2).First<User>();
+                User user1 = UserDataProvider.GetUserById(conv.UserId1);
+                User user2 = UserDataProvider.GetUserById(conv.UserId2);
 
                 if (user1 == null || user2 == null)
                     return false;
@@ -31,20 +31,16 @@ namespace nbp_ask_data.DataProvider
                     Username = user2.Username,
                     ConversationId = conv.Id
                 };
-                if (user1.UserConversaions == null)
-                    user1.UserConversaions = new List<UserConversation>();
                 user1.UserConversaions.Add(userConv1);
-                collection.ReplaceOne<User>((x => x.Id == conv.UserId1), user1);
+                UserDataProvider.UpdateUser(user1);
 
                 UserConversation userConv2 = new UserConversation()
                 {
                     Username = user1.Username,
                     ConversationId = conv.Id
                 };
-                if (user2.UserConversaions == null)
-                    user2.UserConversaions = new List<UserConversation>();
                 user2.UserConversaions.Add(userConv2);
-                collection.ReplaceOne<User>((x => x.Id == conv.UserId2), user2);
+                UserDataProvider.UpdateUser(user2);
 
                 return true;
             }
@@ -84,6 +80,10 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
+        private static bool CheckConversation(User user1, User user2)
+        {
+            return user1.Id != user2.Id;
+        }
         #endregion
 
         public static Conversation GetConversation(string convId)
@@ -104,13 +104,13 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
-        public static Conversation GetConversation(string userId1, string userId2)
+        public static Conversation GetConversation(string userId1, string user2username)
         {
             try
             {
                 var builder = Builders<Conversation>.Filter;
-                var filter = (builder.Eq("UserId1", userId1) & builder.Eq("UserId2", userId2))
-                    | (builder.Eq("UserId1", userId2) & builder.Eq("UserId2", userId1));
+                var filter = (builder.Eq("UserId1", userId1) & builder.Eq("User2Username", user2username))
+                    | (builder.Eq("User1Username", user2username) & builder.Eq("UserId2", userId1));
                 var collection = DataLayer.Database.GetCollection<Conversation>("conversations");
                 Conversation conv = collection.FindSync<Conversation>(filter).First<Conversation>();
 
@@ -123,24 +123,89 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
+        public static List<ReadConversationDTO> GetConversationsWithUser(string userId)
+        {
+            try
+            {
+                var builder = Builders<Conversation>.Filter;
+                var filter = builder.Eq("UserId1", userId) | builder.Eq("UserId2", userId);
+                var collection = DataLayer.Database.GetCollection<Conversation>("conversations");
+                List<Conversation> conv = collection.Find<Conversation>(filter).SortByDescending(x => x.Timestamp).ToList();
+
+                return ReadConversationDTO.FromEntityList(conv, userId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new List<ReadConversationDTO>();
+            }
+        }
+
+        public static ConversationWithMessagesDTO ReadConversation(string convId, string userId)
+        {
+            try
+            {
+                Conversation conv = GetConversation(convId);
+                if (conv == null)
+                    return null;
+                return ConversationWithMessagesDTO.FromEntity(conv, userId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         public static Conversation CreateConversationFromDTO(CreateConversationDTO dto)
         {
             try
             {
-                var filterUser1 = Builders<User>.Filter.Eq("Id", dto.UserId1);
-                var filterUser2 = Builders<User>.Filter.Eq("Id", dto.UserId1);
-                var collection = DataLayer.Database.GetCollection<User>("users");
-                User fetchedUser = collection.FindSync<User>(filterUser1).First<User>();
+                User fetchedUser = UserDataProvider.GetUserById(dto.UserId1);
 
                 if (fetchedUser == null)
                     return null;
 
-                fetchedUser = collection.FindSync<User>(filterUser2).First<User>();
+                fetchedUser = UserDataProvider.GetUserById(dto.UserId2); ;
                 if (fetchedUser == null)
                     return null;
 
                 Conversation c = CreateConversationDTO.FromDTO(dto);
                 c.Id = Guid.NewGuid().ToString();
+
+                return c;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public static Conversation CreateConversation(string senderId, string receiverUsername)
+        {
+            try
+            {
+                User fetchedUser = UserDataProvider.GetUserById(senderId);
+
+                if (fetchedUser == null)
+                    return null;
+
+                User fetchedUser2 = UserDataProvider.GetUserByUserName(receiverUsername); ;
+                if (fetchedUser2 == null)
+                    return null;
+
+                if (!CheckConversation(fetchedUser, fetchedUser2))
+                    return null;
+
+                Conversation c = new Conversation()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    User1Username = fetchedUser.Username,
+                    User2Username = fetchedUser2.Username,
+                    UserId1 = fetchedUser.Id,
+                    UserId2 = fetchedUser2.Id
+                };
 
                 return c;
             }
@@ -188,7 +253,7 @@ namespace nbp_ask_data.DataProvider
             try
             {
                 var collection = DataLayer.Database.GetCollection<Conversation>("conversations");
-                Conversation conv = collection.FindSync<Conversation>(c => c.Id == "5").First<Conversation>();
+                Conversation conv = collection.FindSync<Conversation>(c => c.Id == id).First<Conversation>();
                 RemoveConversationFromUser(conv);
                 return collection.DeleteOne<Conversation>(x => x.Id == id).IsAcknowledged;
             }
