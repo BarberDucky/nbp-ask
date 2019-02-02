@@ -60,6 +60,38 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
+        public static User GetUserById(String userId)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq("Id", userId);
+                var collection = DataLayer.Database.GetCollection<User>("users");
+                User fetchedUser = collection.FindSync<User>(filter).First<User>();
+                return fetchedUser;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public static User GetUserByUserName(String username)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq("Username", username);
+                var collection = DataLayer.Database.GetCollection<User>("users");
+                User fetchedUser = collection.FindSync<User>(filter).First<User>();
+                return fetchedUser;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         public static UserDTO ReadUser(String userId)
         {
             try
@@ -151,6 +183,20 @@ namespace nbp_ask_data.DataProvider
             {
                 Console.WriteLine(e.Message);
                 return null;
+            }
+        }
+
+        public static bool UpdateUser(User user)
+        {
+            try
+            {
+                var collection = DataLayer.Database.GetCollection<User>("users");
+                return collection.ReplaceOne<User>((x => x.Id == user.Id), user).IsAcknowledged;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
             }
         }
     }

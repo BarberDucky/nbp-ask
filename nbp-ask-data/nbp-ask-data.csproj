@@ -61,8 +61,12 @@
   <ItemGroup>
     <Compile Include="DataLayer.cs" />
     <Compile Include="DataProvider\AnswerDataProvider.cs" />
+    <Compile Include="DataProvider\ConversationDataProvider.cs" />
+    <Compile Include="DataProvider\MessageDataProvider.cs" />
     <Compile Include="DataProvider\QuestionDataProvider.cs" />
     <Compile Include="DataProvider\UserDataProvider.cs" />
+    <Compile Include="DTOs\ConversationDTO.cs" />
+    <Compile Include="DTOs\MessageDTO.cs" />
     <Compile Include="DTOs\AnswerDTO.cs" />
     <Compile Include="DTOs\QuestionDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
@@ -71,7 +75,6 @@
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Question.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="Model\UserConversation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

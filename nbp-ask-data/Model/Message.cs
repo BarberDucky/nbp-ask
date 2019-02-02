@@ -9,13 +9,15 @@ namespace nbp_ask_data.Model
     public class Message
     {
         public String Id { get; set; }
-        public String Content { get; set; }
-        public String SenderId { get; set; }
+        public String Content { get; set; }    
         public DateTime Timestamp { get; set; }
+        public String SenderId { get; set; }
+        public String SenderUsername { get; set; }
 
         public Message()
         {
-            Timestamp = DateTime.Now;
+            Id = Guid.NewGuid().ToString();
+            Timestamp = DateTime.Now.ToUniversalTime();
         }
     }
 }
