@@ -79,6 +79,31 @@ namespace nbp_ask_data.DataProvider
         //        return false;
         //    }
         //}
+
+        //public static Conversation CreateConversationFromDTO(CreateConversationDTO dto)
+        //{
+        //    try
+        //    {
+        //        User fetchedUser = UserDataProvider.GetUserById(dto.UserId1);
+
+        //        if (fetchedUser == null)
+        //            return null;
+
+        //        fetchedUser = UserDataProvider.GetUserById(dto.UserId2); ;
+        //        if (fetchedUser == null)
+        //            return null;
+
+        //        Conversation c = CreateConversationDTO.FromDTO(dto);
+        //        c.Id = Guid.NewGuid().ToString();
+
+        //        return c;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.Message);
+        //        return null;
+        //    }
+        //}
         #endregion
 
         #region Private
@@ -161,31 +186,6 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
-        public static Conversation CreateConversationFromDTO(CreateConversationDTO dto)
-        {
-            try
-            {
-                User fetchedUser = UserDataProvider.GetUserById(dto.UserId1);
-
-                if (fetchedUser == null)
-                    return null;
-
-                fetchedUser = UserDataProvider.GetUserById(dto.UserId2); ;
-                if (fetchedUser == null)
-                    return null;
-
-                Conversation c = CreateConversationDTO.FromDTO(dto);
-                c.Id = Guid.NewGuid().ToString();
-
-                return c;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
-            }
-        }
-
         public static Conversation CreateConversation(string senderId, string receiverUsername)
         {
             try
@@ -257,7 +257,7 @@ namespace nbp_ask_data.DataProvider
             try
             {
                 var collection = DataLayer.Database.GetCollection<Conversation>("conversations");
-                Conversation conv = collection.FindSync<Conversation>(c => c.Id == id).First<Conversation>();
+                //Conversation conv = collection.FindSync<Conversation>(c => c.Id == id).First<Conversation>();
                 //RemoveConversationFromUser(conv);
                 return collection.DeleteOne<Conversation>(x => x.Id == id).IsAcknowledged;
             }
