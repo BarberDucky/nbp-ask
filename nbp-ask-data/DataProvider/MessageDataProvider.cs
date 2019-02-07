@@ -1,5 +1,6 @@
 ﻿using nbp_ask_data.DTOs;
 using nbp_ask_data.Model;
+using nbp_ask_data.PusherHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,37 @@ namespace nbp_ask_data.DataProvider
     public class MessageDataProvider
     {
         #region Private
+        private static ConversationWithMessagesDTO AddToNewConversation(CreateMessageDTO dto, Message message)
+        {
+            //Create new conversation
+            Conversation conv = ConversationDataProvider.CreateConversation(dto.SenderId, dto.ReceiverUsername);
+            if (conv == null)
+                return null;
+
+            //Add message to conversation
+            message.SenderUsername = GetSenderUserName(conv, message.SenderId);
+            conv.Messages.Add(message);
+
+            //Insert conversation
+            if (ConversationDataProvider.InsertConversation(conv) == null)
+                return null;
+
+            var retM = ConversationWithMessagesDTO.FromEntity(conv, message.SenderId);
+            return retM;
+        }
+        private static ConversationWithMessagesDTO AddToExistingConversation(CreateMessageDTO dto, Message message)
+        {
+            Conversation existConv = ConversationDataProvider.GetConversation(dto.SenderId, dto.ReceiverUsername);
+
+            if (existConv != null)
+            {
+                ConversationWithMessagesDTO ret = AddMessageToConversation(message, existConv);
+                return ret;
+            }
+
+            return null;
+        }
+
         private static string GetSenderUserName(Conversation c, string senderId)
         {
             if (c.UserId1 == senderId)
@@ -18,7 +50,6 @@ namespace nbp_ask_data.DataProvider
             else
                 return c.User2Username;
         }
-
         private static ConversationWithMessagesDTO AddMessageToConversation(Message message, Conversation c)
         {
             message.SenderUsername = GetSenderUserName(c, message.SenderId);
@@ -34,7 +65,6 @@ namespace nbp_ask_data.DataProvider
 
             return null;
         }
-
         private static Message FindMessage(string convId, string messageId)
         {
             Conversation c = ConversationDataProvider.GetConversation(convId);
@@ -74,20 +104,28 @@ namespace nbp_ask_data.DataProvider
 
         #endregion
 
-        public static ConversationWithMessagesDTO AddMessageToConversation(MessageWithConversationDTO dto)
+        public static async Task<ConversationWithMessagesDTO> AddMessageToConversation(MessageWithConversationDTO dto)
         {
             try
             {
                 if (!CheckMessageWithConversation(dto))
                     return null;
+
+                // Get existing conversation
                 Conversation existConv = ConversationDataProvider.GetConversation(dto.ConversationId);
                 if (existConv == null)
                     return null;
 
+                //Add the message to the existing conversation
                 Message message = MessageWithConversationDTO.FromDTO(dto);
+                var res = AddMessageToConversation(message, existConv);
+                if (res == null)
+                    return null;
 
-                return AddMessageToConversation(message, existConv);
+                //Publish the message
+                await PusherProvider.PublishMessage(res);
 
+                return res;
             }
             catch (Exception e)
             {
@@ -96,39 +134,30 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
-        public static ConversationWithMessagesDTO CreateMessage(CreateMessageDTO dto)
+        public static async Task<ConversationWithMessagesDTO> CreateMessage(CreateMessageDTO dto)
         {
             try
             {
-
                 if (!CheckMessage(dto))
                     return null;
                 
-                // ako koverzacija vec postoji
                 Message message = CreateMessageDTO.FromDTO(dto);
+                
+                //Ako konverzacija vec postoji
+                ConversationWithMessagesDTO result = AddToExistingConversation(dto, message);
 
-
-                Conversation existConv = ConversationDataProvider.GetConversation(dto.SenderId, dto.ReceiverUsername);
-
-                if (existConv != null)
+                if (result == null)
                 {
-                    return AddMessageToConversation(message, existConv);
+                    //Ako konverzacija ne postoji
+                    result = AddToNewConversation(dto, message);
                 }
 
-                //Ako konverzacija vec ne postoji
-
-                Conversation conv = ConversationDataProvider.CreateConversation(dto.SenderId, dto.ReceiverUsername);
-
-                if (conv == null)
+                if (result == null)
                     return null;
 
-                message.SenderUsername = GetSenderUserName(conv, message.SenderId);
-                conv.Messages.Add(message);
+                await PusherProvider.PublishMessage(result);
 
-                if (ConversationDataProvider.InsertConversation(conv) == null)
-                    return null;
-
-                return ConversationWithMessagesDTO.FromEntity(conv, message.SenderId);
+                return result;
             }
             catch (Exception e)
             {

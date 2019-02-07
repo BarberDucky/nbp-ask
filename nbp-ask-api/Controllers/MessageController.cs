@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -23,17 +24,19 @@ namespace nbp_ask_api.Controllers
         }
 
         // POST: api/Message
-        public ConversationWithMessagesDTO Post([FromBody]CreateMessageDTO dto)
+        public async Task<ConversationWithMessagesDTO> Post([FromBody]CreateMessageDTO dto)
         {
-            return MessageDataProvider.CreateMessage(dto);
+            var res = await MessageDataProvider.CreateMessage(dto);
+            return res;
         }
 
         // POST: api/Message
         [HttpPost]
         [Route("api/Message/AddMessageToConversation")]
-        public ConversationWithMessagesDTO Post([FromBody]MessageWithConversationDTO dto)
+        public async Task<ConversationWithMessagesDTO> Post([FromBody]MessageWithConversationDTO dto)
         {
-            return MessageDataProvider.AddMessageToConversation(dto);
+            var res = await MessageDataProvider.AddMessageToConversation(dto);
+            return res;
         }
 
         // DELETE: api/Message/5
