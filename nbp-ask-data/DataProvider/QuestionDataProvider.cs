@@ -101,6 +101,21 @@ namespace nbp_ask_data.DataProvider
             }
         }
 
+        public static List<QuestionDTO> FilterByTags(List<String> tags)
+        {
+            try
+            {
+                var collection = DataLayer.Database.GetCollection<Question>("questions");
+                var filter = Builders<Question>.Filter.AnyIn<String>(x => x.Tags, tags);
+                List<Question> fetchedQuestions = collection.Find<Question>(filter).ToList<Question>();
+                return QuestionDTO.FromEntityList(fetchedQuestions);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
         public static QuestionDTO UpdateQuestion(QuestionDTO questionDTO, String questionId)
         {
 
