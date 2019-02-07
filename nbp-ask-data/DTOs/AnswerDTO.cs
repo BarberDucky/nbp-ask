@@ -15,6 +15,7 @@ namespace nbp_ask_data.DTOs
         public int Points { get; set; }
         public bool IsTrue { get; set; }
         public String PosterId { get; set; }
+        public String PosterName { get; set; }
         public String QuestionId { get; set; }
 
         public static Answer FromDTO(AnswerDTO dto)
@@ -26,6 +27,7 @@ namespace nbp_ask_data.DTOs
                 Content = dto.Content,
                 Points = dto.Points,
                 PosterId = dto.PosterId,
+                PosterName = dto.PosterName,
                 IsTrue = dto.IsTrue,
                 QuestionId = dto.QuestionId
             };
@@ -41,6 +43,7 @@ namespace nbp_ask_data.DTOs
                 Points = question.Points,
                 IsTrue = question.IsTrue,
                 PosterId = question.PosterId,
+                PosterName = question.PosterName,
                 QuestionId = question.QuestionId
             };
         }

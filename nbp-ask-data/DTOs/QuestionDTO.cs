@@ -17,6 +17,7 @@ namespace nbp_ask_data.DTOs
         public bool IsAnswered { get; set; }
         public List<String> Tags { get; set; }
         public String PosterId { get; set; }
+        public String PosterName { get; set; }
         public List<AnswerDTO> Answers { get; set; }
 
         public static Question FromDTO(QuestionDTO dto)
@@ -31,6 +32,7 @@ namespace nbp_ask_data.DTOs
                 IsAnswered = dto.IsAnswered,
                 Tags = dto.Tags,
                 PosterId = dto.PosterId,
+                PosterName = dto.PosterName,
                 Answers = dto.Answers != null ? AnswerDTO.FromDTOList(dto.Answers) : new List<Answer>()
             };
         }
@@ -47,6 +49,7 @@ namespace nbp_ask_data.DTOs
                 IsAnswered = question.IsAnswered,
                 Tags = question.Tags,
                 PosterId = question.PosterId,
+                PosterName = question.PosterName,
                 Answers = AnswerDTO.FromEntityList(question.Answers),
             };
         }

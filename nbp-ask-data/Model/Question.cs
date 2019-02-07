@@ -16,6 +16,7 @@ namespace nbp_ask_data.Model
         public bool IsAnswered { get; set; }
         public List<String> Tags { get; set; }
         public String PosterId { get; set; }
+        public String PosterName { get; set; }
         public List<Answer> Answers { get; set; }
 
 

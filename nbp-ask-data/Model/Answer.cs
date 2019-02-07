@@ -14,6 +14,7 @@ namespace nbp_ask_data.Model
         public int Points { get; set; }
         public bool IsTrue { get; set; }
         public String PosterId { get; set; }
+        public String PosterName { get; set; }
         public String QuestionId { get; set; }
 
         public Answer()
