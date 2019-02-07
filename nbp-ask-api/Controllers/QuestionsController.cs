@@ -26,6 +26,14 @@ namespace nbp_ask_api.Controllers
         }
 
         // POST: api/Questions
+        [HttpPost]
+        [Route("api/Questions/FilterByTags")]
+        public IEnumerable<QuestionDTO> Filter([FromBody]List<String> tags)
+        {
+            return QuestionDataProvider.FilterByTags(tags);
+        }
+
+        // POST: api/Questions
         public QuestionDTO Post([FromBody]QuestionDTO dto)
         {
             return QuestionDataProvider.CreateQuestion(dto);
