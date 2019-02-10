@@ -13,11 +13,7 @@ namespace nbp_ask_api.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class AnswersController : ApiController
     {
-        // GET: api/Answers
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        
 
         [HttpGet]
         [Route("api/Questions/{questionId}/Answers")]
@@ -26,11 +22,7 @@ namespace nbp_ask_api.Controllers
             return AnswerDataProvider.ReadAllAnswers(questionId);
         }
 
-        // GET: api/Answers/5
-        public string Get(int id)
-        {
-            return "value";
-        }
+       
 
         // POST: api/Answers
         public QuestionDTO Post([FromBody]AnswerDTO dto)
