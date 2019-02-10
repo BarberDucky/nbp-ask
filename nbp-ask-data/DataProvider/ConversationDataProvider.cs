@@ -11,100 +11,6 @@ namespace nbp_ask_data.DataProvider
 {
     public class ConversationDataProvider
     {
-        #region Deleted
-        //OBRISAN USER CONVERSATION
-        //private static bool AddConversationToUser(Conversation conv)
-        //{
-        //    try
-        //    {
-        //        var filter1 = Builders<User>.Filter.Eq("Id", conv.UserId1);
-        //        var filter2 = Builders<User>.Filter.Eq("Id", conv.UserId2);
-        //        var collection = DataLayer.Database.GetCollection<User>("users");
-        //        User user1 = UserDataProvider.GetUserById(conv.UserId1);
-        //        User user2 = UserDataProvider.GetUserById(conv.UserId2);
-
-        //        if (user1 == null || user2 == null)
-        //            return false;
-
-        //        UserConversation userConv1 = new UserConversation()
-        //        {
-        //            Username = user2.Username,
-        //            ConversationId = conv.Id
-        //        };
-        //        user1.UserConversaions.Add(userConv1);
-        //        UserDataProvider.UpdateUser(user1);
-
-        //        UserConversation userConv2 = new UserConversation()
-        //        {
-        //            Username = user1.Username,
-        //            ConversationId = conv.Id
-        //        };
-        //        user2.UserConversaions.Add(userConv2);
-        //        UserDataProvider.UpdateUser(user2);
-
-        //        return true;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        return false;
-        //    }
-        //}
-        //private static bool RemoveConversationFromUser(Conversation conv)
-        //{
-        //    try
-        //    {
-        //        var filter1 = Builders<User>.Filter.Eq("Id", conv.UserId1);
-        //        var filter2 = Builders<User>.Filter.Eq("Id", conv.UserId2);
-        //        var collection = DataLayer.Database.GetCollection<User>("users");
-        //        User user1 = collection.FindSync<User>(filter1).First<User>();
-        //        User user2 = collection.FindSync<User>(filter2).First<User>();
-
-        //        if (user1 == null || user2 == null)
-        //            return false;
-
-        //        UserConversation uc = user1.UserConversaions.Find(x => x.ConversationId == conv.Id);
-        //        user1.UserConversaions.Remove(uc);
-        //        collection.ReplaceOne<User>((x => x.Id == conv.UserId1), user1);
-
-        //        uc = user2.UserConversaions.Find(x => x.ConversationId == conv.Id);
-        //        user2.UserConversaions.Remove(uc);
-        //        collection.ReplaceOne<User>((x => x.Id == conv.UserId2), user2);
-
-        //        return true;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        return false;
-        //    }
-        //}
-
-        //public static Conversation CreateConversationFromDTO(CreateConversationDTO dto)
-        //{
-        //    try
-        //    {
-        //        User fetchedUser = UserDataProvider.GetUserById(dto.UserId1);
-
-        //        if (fetchedUser == null)
-        //            return null;
-
-        //        fetchedUser = UserDataProvider.GetUserById(dto.UserId2); ;
-        //        if (fetchedUser == null)
-        //            return null;
-
-        //        Conversation c = CreateConversationDTO.FromDTO(dto);
-        //        c.Id = Guid.NewGuid().ToString();
-
-        //        return c;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        return null;
-        //    }
-        //}
-        #endregion
 
         #region Private
         private static bool CheckConversation(User user1, User user2)
@@ -257,8 +163,6 @@ namespace nbp_ask_data.DataProvider
             try
             {
                 var collection = DataLayer.Database.GetCollection<Conversation>("conversations");
-                //Conversation conv = collection.FindSync<Conversation>(c => c.Id == id).First<Conversation>();
-                //RemoveConversationFromUser(conv);
                 return collection.DeleteOne<Conversation>(x => x.Id == id).IsAcknowledged;
             }
             catch (Exception e)

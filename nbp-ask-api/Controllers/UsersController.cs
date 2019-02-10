@@ -45,9 +45,6 @@ namespace nbp_ask_api.Controllers
             return UserDataProvider.UpdateUser(userDTO, id);
         }
 
-        // DELETE: api/Users/5
-        public void Delete(int id)
-        {
-        }
+      
     }
 }
